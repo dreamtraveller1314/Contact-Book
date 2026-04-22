@@ -39,3 +39,30 @@ int add_new_entry() {
     printf("Contact added successfully!\n");
     return 0;
 }
+
+int read_csv (Contact contact_arraw[]) {
+    FILE *fptr = fopen (FILENAME, "r");
+    if (fptr == NULL) return 1;
+    char buffer [500];
+    int i = 0;
+    while (fgets(buffer, sizeof(buffer), fptr)&& i<100) {
+        char *field = strtok (buffer, ",");
+        int column = 0;
+        while (field != NULL){
+            if (column == 0) {
+                strncpy(contact_arraw[i].name, field, INPUT_LENGTH);
+            } else if (column == 1) {
+                strncpy(contact_arraw[i].address, field, INPUT_LENGTH);
+            } else if (column == 2) {
+                strncpy(contact_arraw[i].phone, field, INPUT_LENGTH);
+            } else if (column == 3) {
+                strncpy(contact_arraw[i].email, field, INPUT_LENGTH);
+            }
+            field = strtok (NULL, ",");
+            column ++;
+        }
+        i++;
+    }
+    fclose(fptr);
+    return 0;
+}
