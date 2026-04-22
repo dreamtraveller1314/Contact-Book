@@ -7,11 +7,21 @@
 
 typedef struct Contact {
     char name[INPUT_LENGTH];
-    char address [INPUT_LENGTH];
     char phone[INPUT_LENGTH];  
     char email[INPUT_LENGTH];
+    char address [INPUT_LENGTH];
     char notes[INPUT_LENGTH];
 } Contact;
+
+void clear_terminal() {
+    #ifdef _WIN32
+        system("cls");
+    #else
+        system("clear");
+    #endif
+    printf("\033[2J\033[H");
+    fflush(stdout);
+}
 
 const char *FILENAME ="contact_book_data.csv";
 Contact contact_array[100];
@@ -37,7 +47,7 @@ int add_new_entry() {
     fgets(notes, INPUT_LENGTH, stdin);
     notes[strcspn(notes, "\n")] = 0;
 
-    fprintf(fptr, "%s,%s,%s,%s,%s\n", name, address, phone, email, notes);
+    fprintf(fptr, "%s,%s,%s,%s,%s\n", name, phone, email, address, notes);
     fclose(fptr);
 
     printf("Contact added successfully!\n");
@@ -75,38 +85,55 @@ int read_csv (Contact contact_array[]) {
 }
 
 void show_details(Contact c) {
-    printf("\n--- Detailed Contact Info ---\n");
-    printf("Name:    %s\n", c.name);
-    printf("Phone:   %s\n", c.phone);
-    printf("Email:   %s\n", c.email);
-    printf("Address: %s\n", c.address);
-    printf("Notes:   %s\n", c.notes);
-    printf("-----------------------------\n");
+    char back_choice;
+    while (1) {
+        clear_terminal();
+        printf("\n--- Detailed Contact Info ---\n");
+        printf("Name:    %s\n", c.name);
+        printf("Phone:   %s\n", c.phone);
+        printf("Email:   %s\n", c.email);
+        printf("Address: %s\n", c.address);
+        printf("Notes:   %s\n", c.notes);
+        printf("-----------------------------\n");
+        printf("\nPress [Q] to back to contact list: ");
+        scanf(" %c", &back_choice);
+        while (getchar() != '\n');
+        if (back_choice == 'q' || back_choice == 'Q') {
+            break;
+        }
+    }
 }
 
 int list_contacts() {
     int count = read_csv(contact_array);
-    if (count <= 0) {
-        printf("No contacts found or file empty.\n");
-        return 0;
-    }
-    printf("\n--- Contact List ---\n");
-    for (int i = 0; i < count; i++) {
-        printf("%d. Name: %s | Phone: %s\n", i + 1, contact_array[i].name, contact_array[i].phone);
-    }
-    char sub_choice[INPUT_LENGTH];
+
     while (1) {
-        printf("\nEnter number for details or [Q] to back to main menu: ");
-        fgets(sub_choice, INPUT_LENGTH, stdin);
-        sub_choice[strcspn(sub_choice, "\n")] = 0;
-        if (sub_choice[0] == 'q' || sub_choice[0] == 'Q') {
-            break;
+        clear_terminal(); 
+        if (count <= 0) {
+            printf("No contacts found.\n");
+            printf("\nPress Enter to return to main menu...");
+            getchar();
+            return 0;
         }
-        int index = atoi(sub_choice);
+
+        printf("\n--- Contact List ---\n");
+        for (int i = 0; i < count; i++) {
+            printf("%d. Name: %-15s | Phone: %s\n", i + 1, contact_array[i].name, contact_array[i].phone);
+        }
+        printf("\nEnter number for details or [Q] to back to main menu: ");
+        char sub_input[INPUT_LENGTH];
+        fgets(sub_input, INPUT_LENGTH, stdin);
+        sub_input[strcspn(sub_input, "\n")] = 0;
+
+        if (sub_input[0] == 'q' || sub_input[0] == 'Q') {
+            break; 
+        }
+
+        int index = atoi(sub_input);
         if (index > 0 && index <= count) {
             show_details(contact_array[index - 1]);
         } else {
-            printf("Invalid selection. Please try again.\n");
+            printf("Invalid selection.\n");
         }
     }
     return 0;
@@ -116,6 +143,7 @@ int main(int argc, char *argv[]) {
     if (argc >1) FILENAME = argv[1];
     char choice;
     while (1) {
+        clear_terminal();
         printf("\n[A]dd, [L]ist, [Q]uit: ");
         if (scanf(" %c", &choice) != 1) break; 
         getchar();
