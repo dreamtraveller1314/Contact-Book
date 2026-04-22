@@ -10,6 +10,7 @@ typedef struct Contact {
     char address [INPUT_LENGTH];
     char phone[INPUT_LENGTH];  
     char email[INPUT_LENGTH];
+    char notes[INPUT_LENGTH];
 } Contact;
 
 const char *FILENAME ="contact_book_data.csv";
@@ -18,22 +19,25 @@ Contact contact_array[100];
 int add_new_entry() {
     FILE *fptr = fopen(FILENAME, "a");
     if (fptr == NULL) return 1;
-    char name[INPUT_LENGTH], address[INPUT_LENGTH], phone[INPUT_LENGTH], email[INPUT_LENGTH];
+    char name[INPUT_LENGTH], phone[INPUT_LENGTH], email[INPUT_LENGTH], address[INPUT_LENGTH], notes[INPUT_LENGTH];
     
     printf("Enter name: ");
     fgets(name, INPUT_LENGTH, stdin);
     name[strcspn(name, "\n")] = 0;
-    printf("Enter address: ");
-    fgets(address, INPUT_LENGTH, stdin);
-    address[strcspn(address, "\n")] = 0;
     printf("Enter phone: ");
     fgets(phone, INPUT_LENGTH, stdin);
     phone[strcspn(phone, "\n")] = 0;
     printf("Enter email: ");
     fgets(email, INPUT_LENGTH, stdin);
     email[strcspn(email, "\n")] = 0;
+    printf("Enter address: ");
+    fgets(address, INPUT_LENGTH, stdin);
+    address[strcspn(address, "\n")] = 0;
+    printf("Enter notes: ");
+    fgets(notes, INPUT_LENGTH, stdin);
+    notes[strcspn(notes, "\n")] = 0;
 
-    fprintf(fptr, "%s,%s,%s,%s\n", name, address, phone, email);
+    fprintf(fptr, "%s,%s,%s,%s,%s\n", name, address, phone, email, notes);
     fclose(fptr);
 
     printf("Contact added successfully!\n");
@@ -42,7 +46,7 @@ int add_new_entry() {
 
 int read_csv (Contact contact_array[]) {
     FILE *fptr = fopen (FILENAME, "r");
-    if (fptr == NULL) return 1;
+    if (fptr == NULL) return 0;
     char buffer [500];
     int i = 0;
     while (fgets(buffer, sizeof(buffer), fptr)&& i<100) {
@@ -53,11 +57,13 @@ int read_csv (Contact contact_array[]) {
             if (column == 0) {
                 strncpy(contact_array[i].name, field, INPUT_LENGTH);
             } else if (column == 1) {
-                strncpy(contact_array[i].address, field, INPUT_LENGTH);
-            } else if (column == 2) {
                 strncpy(contact_array[i].phone, field, INPUT_LENGTH);
-            } else if (column == 3) {
+            } else if (column == 2) {
                 strncpy(contact_array[i].email, field, INPUT_LENGTH);
+            } else if (column == 3) {
+                strncpy(contact_array[i].address, field, INPUT_LENGTH);
+            } else if (column == 4) {
+                strncpy(contact_array[i].notes, field, INPUT_LENGTH);
             }
             field = strtok (NULL, ",");
             column ++;
@@ -65,22 +71,43 @@ int read_csv (Contact contact_array[]) {
         i++;
     }
     fclose(fptr);
-    return 0;
+    return i;
 }
 
-void print_contact(const Contact *contact) {
-    printf("Name: %s | Phone: %s\n", contact->name, contact->phone);
+void show_details(Contact c) {
+    printf("\n--- Detailed Contact Info ---\n");
+    printf("Name:    %s\n", c.name);
+    printf("Phone:   %s\n", c.phone);
+    printf("Email:   %s\n", c.email);
+    printf("Address: %s\n", c.address);
+    printf("Notes:   %s\n", c.notes);
+    printf("-----------------------------\n");
 }
 
 int list_contacts() {
     int count = read_csv(contact_array);
-    if (count == 0) {
+    if (count <= 0) {
         printf("No contacts found or file empty.\n");
         return 0;
     }
     printf("\n--- Contact List ---\n");
     for (int i = 0; i < count; i++) {
-        print_contact(&contact_array[i]);
+        printf("%d. Name: %s | Phone: %s\n", i + 1, contact_array[i].name, contact_array[i].phone);
+    }
+    char sub_choice[INPUT_LENGTH];
+    while (1) {
+        printf("\nEnter number for details or [Q] to back to main menu: ");
+        fgets(sub_choice, INPUT_LENGTH, stdin);
+        sub_choice[strcspn(sub_choice, "\n")] = 0;
+        if (sub_choice[0] == 'q' || sub_choice[0] == 'Q') {
+            break;
+        }
+        int index = atoi(sub_choice);
+        if (index > 0 && index <= count) {
+            show_details(contact_array[index - 1]);
+        } else {
+            printf("Invalid selection. Please try again.\n");
+        }
     }
     return 0;
 }
