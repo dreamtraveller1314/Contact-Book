@@ -133,7 +133,9 @@ int list_contacts() {
         if (index > 0 && index <= count) {
             show_details(contact_array[index - 1]);
         } else {
-            printf("Invalid selection.\n");
+            printf("\nInvalid selection.\n");
+            printf("Press Enter to return...");
+            getchar();
         }
     }
     return 0;
