@@ -124,29 +124,55 @@ int list_contacts() {
         for (int i = 0; i < count; i++) {
             printf("%d. Name: %-15s | Phone: %s\n", i + 1, contact_array[i].name, contact_array[i].phone);
         }
-        printf("\nEnter number for details or [Q] to back to main menu: ");
+        printf("\nEnter number [#] for details contact | [D]elete | [Q]uit: ");
         char sub_input[INPUT_LENGTH];
         fgets(sub_input, INPUT_LENGTH, stdin);
         sub_input[strcspn(sub_input, "\n")] = 0;
-
-        if (sub_input[0] == 'q' || sub_input[0] == 'Q') {
+        char cmd = toupper(sub_input[0]);
+        if (cmd == 'Q') {
             break; 
+        } 
+        else if (cmd == 'D') {
+            printf("Enter the number (#) to delete: ");
+            int del_idx;
+            if (scanf("%d", &del_idx) == 1) {
+                getchar();
+                if (del_idx > 0 && del_idx <= count) {
+                    FILE *fptr = fopen(FILENAME, "w");
+                    for (int i = 0; i < count; i++) {
+                        if (i == (del_idx - 1)) continue;
+                        fprintf(fptr, "%s,%s,%s,%s,%s\n", 
+                                contact_array[i].name, contact_array[i].phone, 
+                                contact_array[i].email, contact_array[i].address, 
+                                contact_array[i].notes);
+                    }
+                    fclose(fptr);
+                    printf("Contact deleted! Press Enter...");
+                    getchar();
+                } else{
+                    printf("\nInvalid selection. Press Enter...");
+                    getchar();
+                }
+            } else {
+                printf("\nInvalid selection. Press Enter...");
+                getchar();
+            }
         }
-
-        int index = atoi(sub_input);
-        if (index > 0 && index <= count) {
-            show_details(contact_array[index - 1]);
-        } else {
-            printf("\nInvalid selection.\n");
-            printf("Press Enter to return...");
-            getchar();
+        else {
+            int index = atoi(sub_input);
+            if (index > 0 && index <= count) {
+                show_details(contact_array[index - 1]);
+            } else {
+                printf("\nInvalid selection. Press Enter...");
+                getchar();
+            }
         }
     }
     return 0;
 }
 
 int main(int argc, char *argv[]) {
-    if (argc >1) FILENAME = argv[1];
+    if (argc > 1) FILENAME = argv[1];
     char choice;
     while (1) {
         clear_terminal();
@@ -156,7 +182,11 @@ int main(int argc, char *argv[]) {
         if (choice == 'a' || choice == 'A') add_new_entry();
         else if (choice == 'l' || choice == 'L') list_contacts();
         else if (choice == 'q' || choice == 'Q') break;
-        else printf(" %c is not a known command.\n", choice);
+        else {
+            printf(" %c is not a known command.\n", choice);
+            printf("Press Enter to continue...");
+            getchar();
+        }
     }
     return 0;
 }
