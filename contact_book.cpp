@@ -109,9 +109,9 @@ int compare_names(const void *a, const void *b) {
 }
 
 int list_contacts() {
-    int count = read_csv(contact_array);
-    qsort(contact_array, count, sizeof(Contact), compare_names);
-    while (1) {
+    while (1) {    
+        int count = read_csv(contact_array);
+        qsort(contact_array, count, sizeof(Contact), compare_names);
         clear_terminal(); 
         if (count <= 0) {
             printf("No contacts found.\n");
@@ -147,13 +147,14 @@ int list_contacts() {
                                 contact_array[i].notes);
                     }
                     fclose(fptr);
-                    printf("Contact deleted! Press Enter...");
+                    printf("Contact deleted! Press Enter to refresh the list...");
                     getchar();
                 } else{
                     printf("\nInvalid selection. Press Enter...");
                     getchar();
                 }
             } else {
+                while (getchar() != '\n'); 
                 printf("\nInvalid selection. Press Enter...");
                 getchar();
             }
