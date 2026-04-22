@@ -68,13 +68,26 @@ int read_csv (Contact contact_arraw[]) {
 }
 
 void print_contact(const Contact *contact) {
-    printf("Name: %s | Number: %s\n", contact->name, contact->number);
+    printf("Name: %s | Phone: %s\n", contact->name, contact->phone);
 }
 
 int list_contacts() {
-    int count = read_from_csv(contact_array);
+    int count = read_csv(contact_array);
     for (int i = 0; i < count; i++) {
         print_contact(&contact_array[i]);
     }
     return 0;
 }
+
+int main(int argc, char *argv[]) {
+    if (argc >1) FILENAME = argv[1];
+    char choice;
+    while (1) {
+        printf("\n[A]dd, [L]ist, [Q]uit:");
+        scanf ("%c", &choice);
+        getchar(); 
+        if (choice == 'a' || choice == 'A') add_new_entry();
+        else if (choice == 'l' || choice == 'L') list_contacts();
+        else if (choice == 'q' || choice == 'Q') break;
+        else printf(" %c is not a known command.\n", choice);
+    }
