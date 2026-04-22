@@ -5,30 +5,12 @@
 
 #define INPUT_LENGTH 100
 
+typedef struct Contact {
+    char name[INPUT_LENGTH];
+    char address [INPUT_LENGTH];
+    char phone[INPUT_LENGTH];  
+    char email[INPUT_LENGTH];
+} Contact;
+
 char *FILENAME = "contact_book_data.csv";
-
-int add_new_entry();
-
-int main() {
-  add_new_entry();
-
-  return 0;
-}
-
-int add_new_entry() {
-  FILE *fptr;
-
-  fptr = fopen(FILENAME, "a"); 
-
-  char name[INPUT_LENGTH] = "name_here";
-  char address[INPUT_LENGTH] = "address_here";
-  char email[INPUT_LENGTH] = "email_here";
-  char number[INPUT_LENGTH] = "number_here";
-
-  fprintf(fptr, "\n%s,%s,%s,%s", name, address, email, number);
-  fclose(fptr);
-
-  printf("\nSaved contact!\n\n");
-
-  return 0;
-}
+Contact contact_array[100];
