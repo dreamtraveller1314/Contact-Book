@@ -66,3 +66,15 @@ int read_csv (Contact contact_arraw[]) {
     fclose(fptr);
     return 0;
 }
+
+void print_contact(const Contact *contact) {
+    printf("Name: %s | Number: %s\n", contact->name, contact->number);
+}
+
+int list_contacts() {
+    int count = read_from_csv(contact_array);
+    for (int i = 0; i < count; i++) {
+        print_contact(&contact_array[i]);
+    }
+    return 0;
+}
