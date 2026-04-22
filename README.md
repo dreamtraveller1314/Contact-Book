@@ -17,4 +17,4 @@ When have contact
 <img width="475" height="227" alt="image" src="https://github.com/user-attachments/assets/8e8e5fa4-6dcb-4ef7-9c11-2a37fc16ef28" />
 
 ## Delete Contact
-<img width="760" height="184" alt="image" src="https://github.com/user-attachments/assets/960a1bd4-92cb-41fb-ade1-5b96388fc488" />
+<img width="775" height="501" alt="image" src="https://github.com/user-attachments/assets/2d3de6f3-221b-4a79-a254-31b41cde1c31" />
