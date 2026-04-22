@@ -12,7 +12,7 @@ typedef struct Contact {
     char email[INPUT_LENGTH];
 } Contact;
 
-char *FILENAME = "contact_book_data.csv";
+const char *FILENAME ="contact_book_data.csv";
 Contact contact_array[100];
 
 int add_new_entry() {
@@ -40,23 +40,24 @@ int add_new_entry() {
     return 0;
 }
 
-int read_csv (Contact contact_arraw[]) {
+int read_csv (Contact contact_array[]) {
     FILE *fptr = fopen (FILENAME, "r");
     if (fptr == NULL) return 1;
     char buffer [500];
     int i = 0;
     while (fgets(buffer, sizeof(buffer), fptr)&& i<100) {
+        buffer[strcspn(buffer, "\n")] = 0;
         char *field = strtok (buffer, ",");
         int column = 0;
         while (field != NULL){
             if (column == 0) {
-                strncpy(contact_arraw[i].name, field, INPUT_LENGTH);
+                strncpy(contact_array[i].name, field, INPUT_LENGTH);
             } else if (column == 1) {
-                strncpy(contact_arraw[i].address, field, INPUT_LENGTH);
+                strncpy(contact_array[i].address, field, INPUT_LENGTH);
             } else if (column == 2) {
-                strncpy(contact_arraw[i].phone, field, INPUT_LENGTH);
+                strncpy(contact_array[i].phone, field, INPUT_LENGTH);
             } else if (column == 3) {
-                strncpy(contact_arraw[i].email, field, INPUT_LENGTH);
+                strncpy(contact_array[i].email, field, INPUT_LENGTH);
             }
             field = strtok (NULL, ",");
             column ++;
@@ -73,6 +74,11 @@ void print_contact(const Contact *contact) {
 
 int list_contacts() {
     int count = read_csv(contact_array);
+    if (count == 0) {
+        printf("No contacts found or file empty.\n");
+        return 0;
+    }
+    printf("\n--- Contact List ---\n");
     for (int i = 0; i < count; i++) {
         print_contact(&contact_array[i]);
     }
@@ -83,11 +89,13 @@ int main(int argc, char *argv[]) {
     if (argc >1) FILENAME = argv[1];
     char choice;
     while (1) {
-        printf("\n[A]dd, [L]ist, [Q]uit:");
-        scanf ("%c", &choice);
-        getchar(); 
+        printf("\n[A]dd, [L]ist, [Q]uit: ");
+        if (scanf(" %c", &choice) != 1) break; 
+        getchar();
         if (choice == 'a' || choice == 'A') add_new_entry();
         else if (choice == 'l' || choice == 'L') list_contacts();
         else if (choice == 'q' || choice == 'Q') break;
         else printf(" %c is not a known command.\n", choice);
     }
+    return 0;
+}
