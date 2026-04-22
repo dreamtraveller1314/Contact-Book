@@ -49,8 +49,9 @@ int add_new_entry() {
 
     fprintf(fptr, "%s,%s,%s,%s,%s\n", name, phone, email, address, notes);
     fclose(fptr);
-
     printf("Contact added successfully!\n");
+    printf("Press Enter to return to main menu...");
+    getchar();
     return 0;
 }
 
@@ -95,12 +96,9 @@ void show_details(Contact c) {
         printf("Address: %s\n", c.address);
         printf("Notes:   %s\n", c.notes);
         printf("-----------------------------\n");
-        printf("\nPress [Q] to back to contact list: ");
-        scanf(" %c", &back_choice);
-        while (getchar() != '\n');
-        if (back_choice == 'q' || back_choice == 'Q') {
-            break;
-        }
+        printf("\nPress Enter to back to contact list: ");
+        getchar();
+        break;
     }
 }
 
