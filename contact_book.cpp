@@ -104,9 +104,15 @@ void show_details(Contact c) {
     }
 }
 
+int compare_names(const void *a, const void *b) {
+    Contact *contactA = (Contact *)a;
+    Contact *contactB = (Contact *)b;
+    return strcasecmp(contactA->name, contactB->name);
+}
+
 int list_contacts() {
     int count = read_csv(contact_array);
-
+    qsort(contact_array, count, sizeof(Contact), compare_names);
     while (1) {
         clear_terminal(); 
         if (count <= 0) {
